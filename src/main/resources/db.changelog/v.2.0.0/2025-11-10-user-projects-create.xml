@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    <changeSet id="2025-11-10-create-projects-table" author="LimonadikGq1">
+        <createTable tableName="projects">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints primaryKey="true" unique="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="key" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="text">
+                <constraints nullable="true" unique="false"/>
+            </column>
+        </createTable>
+        <sql>
+            alter table projects add constraint check_not_empty_key check(key != '');
+            alter table projects add constraint check_not_empty_name check(name != '');
+        </sql>
+    </changeSet>
+
+    <changeSet id="2025-11-10-create-project_role_templates" author="LimonadikGq1">
+        <createTable tableName="project_role_templates">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints primaryKey="true" unique="true"/>
+            </column>
+            <column name="name"  type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+        <sql>
+            alter table project_role_templates add constraint check_not_empty_name check(name != '');
+        </sql>
+    </changeSet>
+
+    <changeSet id="2025-11-10-create-project_roles" author="LimonadikGq1">
+        <createTable tableName="project_roles">
+            <column name="project_id"  type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_role_template_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="project_roles" columnNames="project_id,project_role_template_id"/>
+        <addForeignKeyConstraint baseTableName="project_roles" baseColumnNames="project_id"
+                                 constraintName="FK_project_roles-projects" referencedTableName="projects"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="project_roles" baseColumnNames="project_role_template_id"
+                                 constraintName="FK_project_roles-project_role_templates" referencedTableName="project_role_templates"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+
+    <changeSet id="2025-11-10-create_project_roles_permissions" author="LimonadikGq1">
+        <createTable tableName="project_roles_permissions">
+            <column name="project_role_template_id" type="bigint">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="permission_id" type="bigint">
+                <constraints nullable="false" unique="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="project_roles_permissions" columnNames="project_role_template_id,permission_id"/>
+        <addForeignKeyConstraint baseTableName="project_roles_permissions" baseColumnNames="project_role_template_id"
+                                 constraintName="FK_project_roles_permissions-project_role_template_id" referencedTableName="project_role_templates"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="project_roles_permissions" baseColumnNames="permission_id"
+                                 constraintName="FK_project_roles_permissions-permissions" referencedTableName="permissions"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="2025-11-10-create_projects_user_role-table" author="LimonadikGq1">
+        <createTable tableName="users_projects_roles">
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="project_id" type="bigint">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="project_role_template_id" type="bigint">
+                <constraints nullable="false" unique="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="users_projects_roles" baseColumnNames="project_id"
+                                 constraintName="FK_users_projects_roles-projects" referencedTableName="projects"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="users_projects_roles" baseColumnNames="user_id"
+                                 constraintName="FK_users_projects_roles-users" referencedTableName="users"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="users_projects_roles" baseColumnNames="project_role_template_id"
+                                 constraintName="FK_users_projects_roles-projects_roles" referencedTableName="project_role_templates"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+    <changeSet id="2025-11-10-add-primary-key-to-users_projects_roles" author="">
+        <addPrimaryKey tableName="users_projects_roles" columnNames="user_id,project_id,project_role_template_id"/>
+    </changeSet>
+
+</databaseChangeLog>

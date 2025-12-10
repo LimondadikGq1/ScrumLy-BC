@@ -1,0 +1,29 @@
+openapi: 3.1.0
+spring:
+  messages:
+    basename: messages_en
+    encoding: UTF-8
+  profiles:
+    active: dev
+  docker:
+    compose:
+      enabled: false
+  config:
+    import: classpath:/application-security.yml
+  output:
+    ansi:
+      enabled: always
+  application:
+    name: Jira
+  datasource:
+    url: jdbc:postgresql://localhost:15432/jira
+    username: adm
+    password: 12345
+  liquibase:
+    change-log: classpath:db.changelog/changelog-master.xml
+  jpa:
+    hibernate:
+      ddl-auto: none
+      show-sql: true
+server:
+  port: 8080

@@ -1,0 +1,9 @@
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    com.example.demo: INFO
+    org.hibernate: INFO
+    org.springframework.transaction: INFO
+  pattern:
+    console: '%d{HH:mm:ss} - %highlight(%level) %logger{36} - %msg%n'

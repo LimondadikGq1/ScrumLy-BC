@@ -1,0 +1,3 @@
+  "username": "TestUser1",
+    "email": "TestEmail12@mail.ru",
+    "password": "test123123"

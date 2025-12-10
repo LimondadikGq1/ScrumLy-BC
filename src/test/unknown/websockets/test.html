@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SockJS + STOMP Test</title>
+</head>
+<body>
+<h1>SockJS + STOMP Test</h1>
+<p>Открой DevTools → Console, чтобы видеть логи.</p>
+
+<!-- Подключаем библиотеки -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://unpkg.com/@stomp/stompjs@7/bundles/stomp.umd.js"></script>
+
+<script>
+    // Твой JWT токен
+    const jwtToken = 'Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJnZGFkYWdmaWdhQGdtYWlsLmNvbSIsImlhdCI6MTc2Mzg1NzE4MywiZXhwIjozNjAwMDE3NjM4NTcxODN9.JlB-GcFabJex6u7-CwTY5nRl9bwV_xmlK5AkOsPs6ix9OXtQ1TwDCVndUvp5rPZk';
+
+    // 1. Создаём SockJS-соединение
+    const socket = new SockJS('http://localhost:8081/ws');
+
+    // 2. Создаём STOMP-клиент с JWT в хедерах
+    const stompClient = new StompJs.Client({
+      webSocketFactory: () => socket,
+      connectHeaders: {
+        'Authorization': jwtToken,           // ← JWT токен
+        'X-Client-Type': 'web-browser',     // ← опционально
+        'X-Client-Version': '1.0.0'         // ← опционально
+      },
+      debug: (str) => console.log('💬 STOMP:', str),
+      reconnectDelay: 5000,
+      onConnect: (frame) => {
+        console.log('✅ Подключено через SockJS + STOMP');
+        console.log('👤 Пользователь:', frame.headers['user-name']);
+
+        // Подписываемся с хедерами
+        stompClient.subscribe('/topic/greeting', (message) => {
+          console.log('📥 Получено:', message.body);
+        });
+
+        // Отправляем сообщение с хедерами
+        setTimeout(() => {
+          stompClient.publish({
+            destination: '/app/greeting',
+            body: 'Привет из браузера!',
+            headers: {
+              'Authorization': jwtToken,     // ← токен в исходящих сообщениях
+              'Content-Type': 'text/plain'
+            }
+          });
+        }, 1000);
+      },
+      onStompError: (frame) => {
+        console.error('❌ STOMP ошибка:', frame.headers['message'], frame.body);
+      },
+      onWebSocketError: (event) => {
+        console.error('❌ WebSocket ошибка:', event);
+      }
+    });
+
+    // 3. Запускаем подключение
+    stompClient.activate();
+</script>
+</body>
+</html><!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SockJS + STOMP Test</title>
+</head>
+<body>
+<h1>SockJS + STOMP Test</h1>
+<p>Открой DevTools → Console, чтобы видеть логи.</p>
+
+<!-- Подключаем библиотеки -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://unpkg.com/@stomp/stompjs@7/bundles/stomp.umd.js"></script>
+
+<script>
+    // Твой JWT токен
+    const jwtToken = 'Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJnZGFkYWdmaWdhQGdtYWlsLmNvbSIsImlhdCI6MTc2Mzg1NzE4MywiZXhwIjozNjAwMDE3NjM4NTcxODN9.JlB-GcFabJex6u7-CwTY5nRl9bwV_xmlK5AkOsPs6ix9OXtQ1TwDCVndUvp5rPZk';
+
+    // 1. Создаём SockJS-соединение
+    const socket = new SockJS('http://localhost:8081/ws');
+
+    // 2. Создаём STOMP-клиент с JWT в хедерах
+    const stompClient = new StompJs.Client({
+      webSocketFactory: () => socket,
+      connectHeaders: {
+        'Authorization': jwtToken,           // ← JWT токен
+        'X-Client-Type': 'web-browser',     // ← опционально
+        'X-Client-Version': '1.0.0'         // ← опционально
+      },
+      debug: (str) => console.log('💬 STOMP:', str),
+      reconnectDelay: 5000,
+      onConnect: (frame) => {
+        console.log('✅ Подключено через SockJS + STOMP');
+        console.log('👤 Пользователь:', frame.headers['user-name']);
+
+        // Подписываемся с хедерами
+        stompClient.subscribe('/topic/greeting', (message) => {
+          console.log('📥 Получено:', message.body);
+        });
+
+        // Отправляем сообщение с хедерами
+        setTimeout(() => {
+          stompClient.publish({
+            destination: '/app/greeting',
+            body: 'Привет из браузера!',
+            headers: {
+              'Authorization': jwtToken,     // ← токен в исходящих сообщениях
+              'Content-Type': 'text/plain'
+            }
+          });
+        }, 1000);
+      },
+      onStompError: (frame) => {
+        console.error('❌ STOMP ошибка:', frame.headers['message'], frame.body);
+      },
+      onWebSocketError: (event) => {
+        console.error('❌ WebSocket ошибка:', event);
+      }
+    });
+
+    // 3. Запускаем подключение
+    stompClient.activate();
+</script>
+</body>
+</html>

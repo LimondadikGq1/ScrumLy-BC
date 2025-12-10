@@ -1,0 +1,12 @@
+security:
+  token:
+    access:
+      secret: 8074658237c236e39e96e909ac1abb25a3e1773b100096ad6877c439cd452c17
+      duration: 10h
+    refresh:
+      duration: 24h
+project:
+  key:
+    prefix: JIRA-
+    min: 10000
+    max: 99999

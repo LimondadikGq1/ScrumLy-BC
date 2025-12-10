@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    <changeSet id="2025-42-52-create-table-types" author="LimonadikGq1">
+        <createTable tableName="types">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="project_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_default" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="types"
+                                 baseColumnNames="project_id"
+                                 constraintName="fk_types_project"
+                                 referencedTableName="projects"
+                                 referencedColumnNames="id"/>
+        <addUniqueConstraint tableName="types"
+                             columnNames="project_id, name"
+                             constraintName="uq_types_project_name"/>
+    </changeSet>
+    <changeSet id="2025-42-52-create-table-statuses" author="LimonadikGq1">
+        <createTable tableName="statuses">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_default" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="statuses"
+                                 baseColumnNames="project_id"
+                                 constraintName="fk_statuses_project"
+                                 referencedTableName="projects"
+                                 referencedColumnNames="id"/>
+        <addUniqueConstraint tableName="statuses"
+                             columnNames="project_id, name"
+                             constraintName="uq_statuses_project_name"/>
+    </changeSet>
+
+    <changeSet id="2025-42-52-create-table-sprints" author="LimonadikGq1">
+        <createTable tableName="sprints">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_sprints"/>
+            </column>
+            <column name="project_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+            <column name="all_points" type="INT" defaultValueNumeric="0"/>
+            <column name="closed_points" type="INT" defaultValueNumeric="0"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="sprints"
+                                 baseColumnNames="project_id"
+                                 constraintName="FK_sprints_project"
+                                 referencedTableName="projects"
+                                 referencedColumnNames="id"/>
+        <addUniqueConstraint tableName="sprints"
+                             columnNames="project_id, name"
+                             constraintName="uq_sprints_project_name"/>
+    </changeSet>
+
+    <changeSet id="2025-42-52-create-table-issues" author="LimonadikGq1">
+        <createTable tableName="issues">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="project_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sprint_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="priority" type="VARCHAR(30)"/>
+            <column name="type_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="story_points" type="INT"/>
+            <column name="author_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ"/>
+            <column name="closed_at" type="TIMESTAMPTZ"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="issues"
+                                 baseColumnNames="project_id"
+                                 constraintName="fk_issues_project"
+                                 referencedTableName="projects"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="issues"
+                                 baseColumnNames="sprint_id"
+                                 constraintName="fk_issues_sprint"
+                                 referencedTableName="sprints"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="issues"
+                                 baseColumnNames="type_id"
+                                 constraintName="fk_issues_type"
+                                 referencedTableName="types"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="issues"
+                                 baseColumnNames="status_id"
+                                 constraintName="fk_issues_status"
+                                 referencedTableName="statuses"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="issues"
+                                 baseColumnNames="author_id"
+                                 constraintName="fk_issues_author"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="2025-42-52-create-table-issue-participants" author="LimonadikGq1">
+        <createTable tableName="issue_participants">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="issue_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(30)"/>
+            <column name="joined_at" type="timestamptz"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="issue_participants"
+                                 baseColumnNames="issue_id"
+                                 constraintName="fk_participants_issue"
+                                 referencedTableName="issues"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="issue_participants"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_participants_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+
+        <addUniqueConstraint tableName="issue_participants"
+                             columnNames="issue_id, user_id"
+                             constraintName="uq_participant_issue_user"/>
+    </changeSet>
+    <changeSet id="2025-42-52-create-table-issue-comments" author="LimonadikGq1">
+        <createTable tableName="issue_comments">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="issue_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamptz"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="issue_comments"
+                                 baseColumnNames="issue_id"
+                                 constraintName="fk_comments_issue"
+                                 referencedTableName="issues"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="issue_comments"
+                                 baseColumnNames="author_id"
+                                 constraintName="fk_comments_author"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="2025-42-52-create-table-issue-events" author="LimonadikGq1">
+        <createTable tableName="issue_events">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_issue_events"/>
+            </column>
+            <column name="issue_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT"/>
+            <column name="event_type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payload" type="JSON"/>
+            <column name="created_at" type="timestamptz"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="issue_events"
+                                 baseColumnNames="issue_id"
+                                 constraintName="fk_events_issue"
+                                 referencedTableName="issues"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="issue_events"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_events_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

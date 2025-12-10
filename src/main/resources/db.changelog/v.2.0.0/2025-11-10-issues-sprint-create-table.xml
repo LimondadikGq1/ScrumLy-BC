@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="insert-issues-project" author="LimonadikGq1">
+        <createTable tableName="issues">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints primaryKey="true" unique="true"/>
+            </column>
+            <column name="key" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="true" unique="false"/>
+            </column>
+            <column name="description" type="text">
+                <constraints nullable="true" unique="false"/>
+            </column>
+            <column name="type_id">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="status_id">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="assignee_id" type="bigint">
+                <constraints nullable="true" unique="false"/>
+            </column>
+            <column name="reporter_id" type="bigint">
+                <constraints nullable="true" unique="false"/>
+            </column>
+            <column name="created_date" type="timestamptz">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="project_id" type="bigint">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="sprint_id" type="bigint">
+                <constraints nullable="true" unique="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="issues" baseColumnNames="type_id"
+                                 constraintName="FK_issues_type" referencedTableName="issues_type"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="issues" baseColumnNames="status_id"
+                                 constraintName="FK_issues_status" referencedTableName="statuses_type"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="issues" baseColumnNames="project_id"
+                                 constraintName="FK_issues_project" referencedTableName="project"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="issues" baseColumnNames="sprint_id"
+                                 constraintName="FK_issues_sprint" referencedTableName="sprint"
+                                 referencedColumnNames="id"/>
+        <sql>
+            alter table issues add constraint check_not_empty_issue check(key != '');
+        </sql>
+    </changeSet>
+    <changeSet id="create-types-issues-table" author="LimonadikGq1">
+        <createTable tableName="issues_type">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints primaryKey="true" unique="true"/>
+            </column>
+            <column name="name">
+                <constraints unique="true" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="create-statuses-issue-table" author="LimonadikGq1">
+        <createTable tableName="statuses_type">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints primaryKey="true" unique="true"/>
+            </column>
+            <column name="name">
+                <constraints unique="true" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

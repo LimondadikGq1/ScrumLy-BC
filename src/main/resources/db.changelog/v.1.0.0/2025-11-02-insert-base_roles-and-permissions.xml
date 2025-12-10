@@ -1,0 +1,41 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    <changeSet id="insert-permissions" author="LimonadikGq1">
+        <insert tableName="permissions">
+            <column name="id" value="1"/>
+            <column name="name" value="USER_BAN"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="id" value="2"/>
+            <column name="name" value="USER_CREATE"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-base-user-roles" author="LimonadikGq1">
+        <insert tableName="roles">
+            <column name="id" value="1"/>
+            <column name="name" value="USER"/>
+        </insert>
+        <insert tableName="roles">
+            <column name="id" value="2"/>
+            <column name="name" value="ADMIN"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-base-roles_permissions" author="LimonadikGq1">
+        <insert tableName="roles_permissions">
+            <column name="role_id" value="1"/>
+            <column name="permission_id" value="2"/>
+        </insert>
+        <insert tableName="roles_permissions">
+            <column name="role_id" value="2"/>
+            <column name="permission_id" value="1"/>
+        </insert>
+        <insert tableName="roles_permissions">
+            <column name="role_id" value="2"/>
+            <column name="permission_id" value="2"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

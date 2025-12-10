@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="insert-sprint-projects" author="LimonadikGq1">
+        <createTable tableName="sprints">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints primaryKey="true" unique="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="start_date" type="timestamptz">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="end_date" type="timestamptz">
+                <constraints nullable="true" unique="false"/>
+            </column>
+            <column name="status" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="project_id" type="bigint">
+                <constraints nullable="false" unique="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="sprints" baseColumnNames="project_id"
+                                 constraintName="FK_sprints_project" referencedTableName="project"
+                                 referencedColumnNames="id"/>
+        <sql>
+            alter table sprints add constraint check_not_empty_sprints check(status != '');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
