@@ -18,7 +18,7 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
     @Query("""
          SELECT key FROM Project p
          where p.key = :key
-     """)
+    """)
     Optional<String> findKey(@Param("key") String key);
 
 
@@ -26,7 +26,7 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
         SELECT DISTINCT u FROM User u 
         INNER JOIN  UserProjectRole usr on usr.user.id = u.id
         WHERE usr.user.id = :userId AND usr.project.id = :projectId  
-        """)
+    """)
     List<User> findAllUsersByProject(@Param("authorId") Long userId,
                                      @Param("projectId") Long projectId);
 
@@ -36,7 +36,7 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
         INNER JOIN  UserProjectRole upr on upr.project.id = p.id
         where upr.user.id = :userId
     """)
-    Page<Project> findAllByUsersAndRoles_UserId(@Param("authorId") Long userId,
+    Page<Project> findAllByUsersAndRoles_UserId(@Param("userId") Long userId,
                                                 Pageable pageable);
 
 
@@ -52,16 +52,16 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
     @Query("""
        SELECT p FROM Project p
        INNER JOIN  UserProjectRole upr ON upr.project.id = p.id
-       where upr.user.id = :userId AND p.key = :key
+       where upr.user.id = :authorId AND p.key = :key
     """)
-    Optional<Project> findProjectByKey(@Param("authorId") Long userId,
+    Optional<Project> findProjectByKey(@Param("authorId") Long authorId,
                                        @Param("key") String key);
 
 
     @Query("""
        SELECT p FROM Project p
-       INNER JOIN UserProjectRole upr on upr.project = p
-       where upr.user.id= :authorId AND p.id = :projectId 
+       INNER JOIN UserProjectRole upr on upr.project.id = p.id
+       where upr.user.id = :authorId AND p.id = :projectId 
     """)
     Optional<Project> findProjectById(@Param("authorId") Long authorId,
                                       @Param("projectId") Long projectId

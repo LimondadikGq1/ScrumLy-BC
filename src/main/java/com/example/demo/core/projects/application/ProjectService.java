@@ -32,4 +32,10 @@ public interface ProjectService {
      Project findProjectByKey(Long userId, String key);
 
      Project findProjectById(Long userId, Long id);
+
+     void deleteProject(Long userId, Long projectId);
+
+     void changeName(Long userId, Integer projectId,String name);
+
+     void changeDescription(Long userId, Integer projectId,String name);
 }

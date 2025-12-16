@@ -7,6 +7,6 @@ import lombok.Builder;
 public record ChangeUsernameRequest(
 
         @UsernameValidation
-        String newUsername
+        String username
 ) {
 }

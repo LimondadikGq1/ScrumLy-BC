@@ -19,9 +19,9 @@ public class BaseNotFoundException extends RuntimeException {
         super(message, cause);
     }
 
-    public BaseNotFoundException(String message, String param) {
+    public BaseNotFoundException(String message, String ...params) {
         super(message);
-        this.param = param;
+        this.params = params;
     }
 
     public BaseNotFoundException(String message, Number... params) {

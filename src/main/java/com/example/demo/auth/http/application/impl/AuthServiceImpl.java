@@ -12,6 +12,7 @@ import com.example.demo.core.users.infrastructure.entity.SystemRole;
 import com.example.demo.core.users.infrastructure.entity.User;
 import com.example.demo.core.users.infrastructure.jpa.RoleRepository;
 import com.example.demo.core.users.infrastructure.jpa.UserRepository;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -71,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
 
         if (!passwordEncoder.matches(signInRequest.password(), user.getPassword())) {
             log.info("Failed to login - passwords doesn't match");
-            throw new AuthentificationException(AUTHENTIFICATION_EXCEPTION);
+            throw new AuthentificationException(AUTHENTIFICATION_EXCEPTION,signInRequest.password());
         }
 
         return generateAuthResponse(user.getEmail());
@@ -89,12 +90,24 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void signOut(String refreshToken) {
+    public Cookie signOut(String refreshToken) {
         if (jwtService.isTokenAlive(refreshToken)) {
+            Cookie cookieToRemove = new Cookie("refresh", null);
+            cookieToRemove.setMaxAge(0);
+            cookieToRemove.setPath("/");
             SecurityContextHolder.clearContext();
             log.info("Success sign out");
+            return cookieToRemove;
         }
         throw new AuthentificationException("User not authenticated");
+    }
+
+    @Override
+    public Cookie createCookie(String refresh) {
+        Cookie cookie = new Cookie("refresh",refresh);
+        cookie.setPath("/");
+        cookie.setMaxAge(20000);
+        return cookie;
     }
 
     private JwtAuthTokenResponse generateAuthResponse(String email) {

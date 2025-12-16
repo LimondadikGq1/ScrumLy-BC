@@ -41,8 +41,6 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final Paginator<Project> paginator;
 
-    private final UserRepository userRepository;
-
     @Override
     @Transactional
     public Project createProject(CreateProjectRequest projectResponse,
@@ -61,8 +59,7 @@ public class ProjectServiceImpl implements ProjectService {
         log.info("Project name:{}",project.getName());
 
         userProjectRoleService.buildAndSaveUserProjectRole(
-                savedProject,
-                userId,
+                savedProject, userId,
                 CREATOR_PROJECT_ROLE);
 
         return project;
@@ -119,4 +116,27 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRepository.findProjectById(userId,id)
                 .orElseThrow(() -> new ProjectNotFoundException(PROJECT_NOT_FOUND_BY_ID,id));
     }
+
+    @Override
+    public void deleteProject(Long userId, Long projectId) {
+        projectRepository.deleteById(projectId);
+    }
+
+    @Override
+    @Transactional
+    public void changeName(Long userId, Integer projectId, String name) {
+        Project project = projectRepository
+                .findById(Long.valueOf(projectId)).orElseThrow(() -> new ProjectNotFoundException(PROJECT_NOT_FOUND_BY_ID));
+        project.setName(name);
+    }
+
+    @Override
+    @Transactional
+    public void changeDescription(Long userId, Integer projectId, String description) {
+        Project project = projectRepository
+                .findById(Long.valueOf(projectId)).orElseThrow(() -> new ProjectNotFoundException(PROJECT_NOT_FOUND_BY_ID));
+        project.setDescription(description);
+    }
+
+
 }

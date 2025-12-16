@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_BY_ID, userId));
         log.info("Get user: {}",user.getId());
 
-        String hashedPass = passwordEncoder.encode(request.newPassword());
+        String hashedPass = passwordEncoder.encode(request.password());
 
         user.setPassword(hashedPass);
         return user;
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_BY_ID,userId));
 
-        user.setUsername(request.newUsername());
+        user.setUsername(request.username());
 
         return user;
     }

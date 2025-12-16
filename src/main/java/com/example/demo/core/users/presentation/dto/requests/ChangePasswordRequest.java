@@ -8,6 +8,6 @@ import lombok.Builder;
 public record ChangePasswordRequest(
 
         @PasswordValidation
-        String newPassword
+        String password
 ) {
 }

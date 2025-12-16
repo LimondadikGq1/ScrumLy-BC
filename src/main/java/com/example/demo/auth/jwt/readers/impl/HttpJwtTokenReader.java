@@ -36,7 +36,6 @@ public class HttpJwtTokenReader implements JwtTokenReader {
 
     @Override
     public UsernamePasswordAuthenticationToken extractUser(String fullToken) {
-
         String jwt = extractAndValidateToken(fullToken);
 
         if (jwt == null) {

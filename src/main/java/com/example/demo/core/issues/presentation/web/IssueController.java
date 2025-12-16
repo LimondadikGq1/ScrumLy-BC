@@ -4,6 +4,9 @@ import com.example.demo.auth.user.UserDetails;
 import com.example.demo.core.issues.application.main.impl.IssueService;
 import com.example.demo.core.issues.infrastructure.entity.Issue;
 import com.example.demo.core.issues.presentation.dto.requests.CreateIssueRequest;
+import com.example.demo.core.issues.presentation.dto.requests.IssueInfoRequest;
+import com.example.demo.core.issues.presentation.dto.requests.status.ChangeStatusRequest;
+import com.example.demo.core.issues.presentation.dto.requests.type.ChangeTypeRequest;
 import com.example.demo.core.issues.presentation.dto.responses.issue.FullDataIssueResponse;
 import com.example.demo.core.issues.presentation.dto.responses.status.ChangeStatusIssueResponse;
 import com.example.demo.core.issues.presentation.dto.responses.type.ChangeTypeIssueResponse;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.example.demo.core.issues.presentation.web.IssueControlerPaths.CHANGE;
@@ -46,6 +50,20 @@ public class IssueController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping(path =  GET_INFO_ISSUE)
+    public ResponseEntity<FullDataIssueResponse> getIssueInfo(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(value = "projectId") Long projectId,
+            @RequestParam(value = "issueId") Long issueId
+    ){
+        IssueInfoRequest info = IssueInfoRequest.builder()
+                .issueId(issueId)
+                .projectId(projectId)
+                .build();
+        Issue issue =  issueService.getIssueInfoById(userDetails.getId(),info);
+        return ResponseEntity.ok(issueMapper.toFullDataIssueResponse(issue));
+    }
+
     @PostMapping(path =  CHANGE + CHANGE_STATUS + ID)
     public ResponseEntity<ChangeStatusIssueResponse> changeStatus(
     ){
@@ -54,22 +72,17 @@ public class IssueController {
 
     @PostMapping(path =  CHANGE + CHANGE_TYPE + ID)
     public ResponseEntity<ChangeTypeIssueResponse> changeType(
-
-    ){
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody ChangeTypeRequest request
+            ){
         return null;
     }
 
     @PostMapping(path =  CHANGE + CHANGE_ISSUE_DATA)
     public ResponseEntity<FullDataIssueResponse> changeIssueData(
-
-    ){
+            @RequestBody ChangeStatusRequest request
+            ){
         return null;
     }
 
-    @GetMapping(path =  GET_INFO_ISSUE + ID)
-    public ResponseEntity<CreateIssueRequest> getIssueInfo(
-
-    ){
-        return null;
-    }
 }

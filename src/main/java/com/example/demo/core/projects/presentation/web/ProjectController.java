@@ -3,6 +3,7 @@ package com.example.demo.core.projects.presentation.web;
 import com.example.demo.auth.user.UserDetails;
 import com.example.demo.core.projects.application.ProjectService;
 import com.example.demo.core.projects.infrastructure.entity.Project;
+import com.example.demo.core.projects.presentation.dto.requests.ChangeNameRequest;
 import com.example.demo.core.projects.presentation.dto.requests.CreateProjectRequest;
 import com.example.demo.core.projects.presentation.dto.responses.CreateProjectResponse;
 import com.example.demo.core.projects.presentation.mappers.ProjectMapper;
@@ -17,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.swing.plaf.PanelUI;
 import java.util.List;
 
 import static com.example.demo.core.projects.presentation.web.ProjectPaths.BY_ID;
@@ -32,9 +36,13 @@ import static com.example.demo.core.projects.presentation.web.ProjectPaths.BY_KE
 import static com.example.demo.core.projects.presentation.web.ProjectPaths.BY_NAME;
 import static com.example.demo.core.projects.presentation.web.ProjectPaths.BY_PROJECT;
 import static com.example.demo.core.projects.presentation.web.ProjectPaths.BY_USER;
+import static com.example.demo.core.projects.presentation.web.ProjectPaths.CHANGE;
+import static com.example.demo.core.projects.presentation.web.ProjectPaths.DELETE;
+import static com.example.demo.core.projects.presentation.web.ProjectPaths.DESCRIPTION;
 import static com.example.demo.core.projects.presentation.web.ProjectPaths.ID;
 import static com.example.demo.core.projects.presentation.web.ProjectPaths.KEY;
 import static com.example.demo.core.projects.presentation.web.ProjectPaths.NAME;
+import static com.example.demo.core.projects.presentation.web.ProjectPaths.NAME_;
 import static com.example.demo.core.projects.presentation.web.ProjectPaths.PROJECT_BASE_URL;
 import static com.example.demo.core.projects.presentation.web.ProjectPaths.SEARCH;
 import static com.example.demo.core.projects.presentation.web.ProjectPaths.V1;
@@ -62,6 +70,35 @@ public class ProjectController {
         CreateProjectResponse response = projectMapper.toCreateProjectResponse(project);
         return ResponseEntity.ok(response);
     }
+    @DeleteMapping(path = V1 + DELETE + ID)
+    public ResponseEntity<Void> deleteProject(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable("id") Long id
+    ){
+        projectService.deleteProject(userDetails.getId(),id);
+        return ResponseEntity.noContent().build();
+    }
+    @GetMapping(path =  V1 + CHANGE + NAME_)
+    public ResponseEntity<Void> changeName(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(value = "id") Integer id,
+            @RequestParam(value = "name") String name
+    ){
+        log.info("id:{}",id);
+        log.info("name: {}",name);
+        projectService.changeName(userDetails.getId(),id,name);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(path =  V1 + CHANGE + DESCRIPTION)
+    public ResponseEntity<Void> changeDescription(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(value = "id") Integer id,
+            @RequestParam(value = "description") String description
+    ){
+        projectService.changeDescription(userDetails.getId(),id,description);
+        return ResponseEntity.noContent().build();
+    }
 
     @GetMapping(path = V1 + SEARCH + BY_USER)
     public ResponseEntity<List<CreateProjectResponse>> getAllUserProjectsCursor(
@@ -82,12 +119,13 @@ public class ProjectController {
             @RequestParam(value = "offset",required = false, defaultValue = "5") Integer offset,
             @RequestParam(value = "limit", defaultValue = "10") Integer limit,
             @RequestParam(value = "sort",defaultValue = "ID") SortBy sortBy,
-            @RequestParam(value = "sortBy", defaultValue = "ASC") SortOrder sortOrder,
+            @RequestParam(value = "order", defaultValue = "ASC") SortOrder sortOrder,
             @AuthenticationPrincipal UserDetails userDetails
     ){
         log.info("cursor:{}, limit:{}, sort:{}, sortBy:{}",offset,limit,sortBy.getSort(),sortOrder.getOrder());
         Long userId = userDetails.getId();
         Page<Project> projects = projectService.findAllUserProjectsLimitOffset(userId,offset,limit,sortBy,sortOrder);
+        log.info("get" +  projects);
         List<CreateProjectResponse> createProjectRespons = projectMapper.toListCreateProjectResponse(projects.getContent());
         return ResponseEntity.ok(createProjectRespons);
     }

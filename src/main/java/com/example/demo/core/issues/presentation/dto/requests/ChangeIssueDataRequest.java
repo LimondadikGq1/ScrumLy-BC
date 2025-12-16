@@ -14,7 +14,7 @@ import static com.example.demo.global.MessageKeys.ISSUE_STATUS_ID_NOT_NULL;
 import static com.example.demo.global.MessageKeys.ISSUE_TYPE_ID_NOT_NULL;
 
 @Builder
-public record CreateIssueRequest(
+public record ChangeIssueDataRequest(
 
         @NotNull(message = ISSUE_NAME_NOT_NULL)
         @NotBlank(message = ISSUE_NAME_NOT_BLANK)
@@ -28,13 +28,13 @@ public record CreateIssueRequest(
         @NotBlank(message = ISSUE_PRIORITY_NOT_NULL)
         Priority priority,
 
-        @NotNull(message = ISSUE_STATUS_ID_NOT_NULL)
-        Long statusId,
-
         @NotNull(message = ISSUE_TYPE_ID_NOT_NULL)
         Long typeId,
 
         Integer story_points,
+
+        @NotNull(message = ISSUE_STATUS_ID_NOT_NULL)
+        Long statusId,
 
         @NotNull(message = ISSUE_PROJECT_ID_NOT_NULL)
         Long projectId

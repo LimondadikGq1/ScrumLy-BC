@@ -9,7 +9,11 @@ import com.example.demo.core.issues.infrastructure.entity.Issue;
 import com.example.demo.core.issues.infrastructure.entity.additionals.Status;
 import com.example.demo.core.issues.infrastructure.entity.additionals.Type;
 import com.example.demo.core.issues.infrastructure.jpa.IssueRepository;
+import com.example.demo.core.issues.presentation.dto.requests.ChangeIssueDataRequest;
 import com.example.demo.core.issues.presentation.dto.requests.CreateIssueRequest;
+import com.example.demo.core.issues.presentation.dto.requests.IssueInfoRequest;
+import com.example.demo.core.issues.presentation.dto.requests.status.ChangeStatusRequest;
+import com.example.demo.core.issues.presentation.dto.requests.type.ChangeTypeRequest;
 import com.example.demo.core.projects.application.ProjectService;
 import com.example.demo.core.projects.infrastructure.entity.Project;
 import com.example.demo.core.users.application.UserService;
@@ -17,8 +21,6 @@ import com.example.demo.core.users.infrastructure.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.example.demo.global.exceptions.constants.ExceptionKeys.ISSUE_NOT_FOUND_BY_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -53,28 +55,39 @@ public class IssueServiceImpl implements IssueService {
         return issueRepository.save(issue);
     }
 
+    @Override
+    public Issue getIssueInfoById(Long userId, IssueInfoRequest request) {
+        return issueRepository.findById(userId,request.projectId(),request.issueId())
+                .orElseThrow(() -> new IssueNotFoundException("Issue not found"));
+    }
+
+    @Override
+    public Status changeStatus(Long userId, ChangeStatusRequest request) {
+         return null;
+    }
+
+    @Override
+    public Type changeType(Long userId, ChangeTypeRequest request) {
+        return null;
+    }
+
+    @Override
+    public Issue changeData(Long userId, ChangeIssueDataRequest request) {
+        return null;
+    }
+
     private IssueDto buildIssueData(Long userId, CreateIssueRequest request){
         Project project = projectService.findProjectById(userId,request.projectId());
         Type type =  typeService.findById(request.typeId());
         Status status = statusService.findById(request.typeId());
         User author = userService.findById(userId);
 
-       return IssueDto.builder()
+        return IssueDto.builder()
                 .user(author)
                 .status(status)
                 .type(type)
                 .project(project)
                 .build();
     }
-    @Override
-    public Issue getIssueInfoById(Long issueId) {
-        Issue issue = issueRepository.findById(issueId)
-                .orElseThrow(() -> new IssueNotFoundException(ISSUE_NOT_FOUND_BY_ID,issueId));
-        return issue;
-    }
 
-    @Override
-    public void closeIssueById(Long issueId) {
-
-    }
 }

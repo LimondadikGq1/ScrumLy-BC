@@ -3,6 +3,7 @@ package com.example.demo.auth.http.application;
 import com.example.demo.auth.http.presentation.dto.requests.SignInRequest;
 import com.example.demo.auth.http.presentation.dto.requests.SignUpRequest;
 import com.example.demo.auth.http.presentation.dto.responces.JwtAuthTokenResponse;
+import jakarta.servlet.http.Cookie;
 
 public interface AuthService {
 
@@ -12,5 +13,7 @@ public interface AuthService {
 
     JwtAuthTokenResponse refresh(String refreshToken);
 
-    void signOut(String refreshToken);
+    Cookie signOut(String refreshToken);
+
+    Cookie createCookie(String refresh);
 }
